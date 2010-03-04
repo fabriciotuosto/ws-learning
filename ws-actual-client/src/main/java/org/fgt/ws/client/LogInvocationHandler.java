@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 public class LogInvocationHandler implements InvocationHandler{
 
 	private static final Logger LOG = LoggerFactory.getLogger(LogInvocationHandler.class);
+	private final Object instance;
+	
+	public LogInvocationHandler(Object instance) {
+		this.instance = instance;
+		
+	}
 	
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
@@ -27,8 +33,8 @@ public class LogInvocationHandler implements InvocationHandler{
 		}
 	}
 
-	private Object actualInvoke(Method method, Object[] args) throws Throwable{
-		return method.invoke(null, args);
+	Object actualInvoke(Method method, Object[] args) throws Throwable{
+		return method.invoke(instance, args);
 	}
 
 }
