@@ -12,8 +12,8 @@ public class CacheInvocationHandler implements InvocationHandler{
 	private final Object instance;
 
 	public CacheInvocationHandler(Cache cache,Object instance) {
-		this.cache = cache;
-		this.instance = instance;
+		this.cache    = Precondition.checkNotNull(cache);
+		this.instance = Precondition.checkNotNull(instance);
 	}
 	
 	public Object invoke(Object proxy, Method method, Object[] args)
@@ -25,14 +25,14 @@ public class CacheInvocationHandler implements InvocationHandler{
 		return result;
 	}
 	
-	private Object invokeAndCache(Method method,Object[] args) throws Throwable{
+	Object invokeAndCache(Method method,Object[] args) throws Throwable{
 		Object result = method.invoke(instance, args);
 		Element element = new Element("", result);
 		cache.put(element);
 		return result;
 	}
 	
-	private Object retrieveFromCache(Method method, Object[] args) {
+	Object retrieveFromCache(Method method, Object[] args) {
 		String key = "";
 		return cache.get(key);
 	}
