@@ -1,42 +1,57 @@
 package org.fgt.ws.client;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LogInvocationHandler implements InvocationHandler {
+public class LogInvocationHandler implements MethodInterceptor {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(LogInvocationHandler.class);
-	private final Object instance;
+    private static final Logger LOG = LoggerFactory.getLogger(LogInvocationHandler.class);
+    private StopWatch watch;
 
-	public LogInvocationHandler(Object instance) {
-		this.instance = instance;
+    public LogInvocationHandler() {
+    }
 
-	}
+    @Override
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        startTime();
+        try {
+            logInvokingMethod(methodInvocation);
+            return methodInvocation.proceed();
+        } finally {
+            endTime();
+            logMethodTiming(methodInvocation);
+        }
+    }
 
-	public Object invoke(Object proxy, Method method, Object[] args)
-			throws Throwable {
-		long start = System.currentTimeMillis();
-		try {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Invoking method= {}(), with args= {}", method
-						.toString(), Arrays.toString(args));
-			}
-			return actualInvoke(method, args);
-		} finally {
-			if (LOG.isDebugEnabled()) {
-				long end = System.currentTimeMillis();
-				LOG.debug("Method {}() took {}ms", Long.valueOf((end - start)));
-			}
-		}
-	}
+    private void endTime() {
+        this.watch.stop();
+    }
 
-	Object actualInvoke(Method method, Object[] args) throws Throwable {
-		return method.invoke(instance, args);
-	}
+    private void startTime() {
+        this.watch = new StopWatch();
+        this.watch.start();
+    }
 
+    private void logMethodTiming(MethodInvocation methodInvocation) {
+        if (LOG.isDebugEnabled()) {
+            long time = watch.getTime();
+            LOG.debug("Method {}() took {}ms", methodInvocation.getMethod().getName(),
+                    Long.valueOf((time)));
+        }
+    }
+
+    private void logInvokingMethod(MethodInvocation methodInvocation) {
+        if (LOG.isDebugEnabled()) {
+            Method method = methodInvocation.getMethod();
+            Object[] args = methodInvocation.getArguments();
+            LOG.debug("Invoking method={}(), with args={}", method.toString(),
+                    Arrays.toString(args));
+        }
+    }
 }

@@ -2,10 +2,37 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                           http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util-2.5.xsd">
-                           
-	
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
+    <bean id="cache" class="net.sf.ehcache.Cache">
+        <constructor-arg value="test"/>
+        <constructor-arg value="10"/>
+        <constructor-arg value="false"/>
+        <constructor-arg value="false"/>
+        <constructor-arg value="0"/>
+        <constructor-arg value="0"/>
+    </bean>
+    <bean id="saluteServiceTarget" class="org.fgt.ws.client.SaluteServiceImpl"/>
+
+    <bean id="cacheInterceptor" class="org.fgt.ws.client.CacheInvocationHandler">
+        <constructor-arg ref="cache"/>
+    </bean>
+
+    <bean id="logInterceptor" class="org.fgt.ws.client.LogInvocationHandler" />
+
+
+
+    <bean id="saluteService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <ref bean="saluteServiceTarget"/>
+        </property>
+        <property name="interceptorNames">
+            <list>
+
+                <value>cacheInterceptor</value>
+            </list>
+        </property>
+    </bean>
 </beans>

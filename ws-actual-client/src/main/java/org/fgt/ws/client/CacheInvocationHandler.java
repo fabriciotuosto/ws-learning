@@ -2,39 +2,58 @@ package org.fgt.ws.client;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CacheInvocationHandler implements InvocationHandler{
+public class CacheInvocationHandler implements MethodInterceptor {
 
-	private final Cache cache;
-	private final Object instance;
+    private static final Logger LOG = LoggerFactory.getLogger(CacheInvocationHandler.class);
+    private final Cache cache;
 
-	public CacheInvocationHandler(Cache cache,Object instance) {
-		this.cache    = Precondition.checkNotNull(cache);
-		this.instance = Precondition.checkNotNull(instance);
-	}
-	
-	public Object invoke(Object proxy, Method method, Object[] args)
-			throws Throwable {
-		Object result = retrieveFromCache(method,args);
-		if(result == null){
-			result = invokeAndCache(method, args); 
-		}
-		return result;
-	}
-	
-	Object invokeAndCache(Method method,Object[] args) throws Throwable{
-		Object result = method.invoke(instance, args);
-		Element element = new Element("", result);
-		cache.put(element);
-		return result;
-	}
-	
-	Object retrieveFromCache(Method method, Object[] args) {
-		String key = "";
-		return cache.get(key);
-	}
+    public CacheInvocationHandler(Cache cache) {
+        this.cache = Precondition.checkNotNull(cache);
 
+    }
+
+    private Object invokeAndCache(MethodInvocation methodInvocation) throws Throwable {
+        Object value = methodInvocation.proceed();
+        String key = generateCacheKey(methodInvocation);
+        Element element = new Element(key, value);
+        cache.put(element);
+        return value;
+    }
+
+    private Object retrieveFromCache(MethodInvocation methodInvocation) {
+        String key = generateCacheKey(methodInvocation);
+        Element element = cache.get(key);
+        return  element != null ? element.getValue() : null;
+    }
+
+    String generateCacheKey(MethodInvocation methodInvocation) {
+        Object[] args = methodInvocation.getArguments();
+        Method method = methodInvocation.getMethod();
+        int hashCode = methodInvocation.getThis().hashCode();
+        String key = String.format("%s.%s()[%s] %s",
+                method.getDeclaringClass().getName(),
+                method.getName(),
+                hashCode,
+                Arrays.toString(args));
+        return key;
+    }
+
+    @Override
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        Object result = retrieveFromCache(methodInvocation);
+        if (result == null) {
+            LOG.debug("Item not found in cache executing method");
+            result = invokeAndCache(methodInvocation);
+        }
+        return result;
+    }
 }
