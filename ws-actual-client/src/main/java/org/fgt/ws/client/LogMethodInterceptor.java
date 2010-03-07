@@ -12,35 +12,25 @@ import org.slf4j.LoggerFactory;
 public class LogMethodInterceptor implements MethodInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogMethodInterceptor.class);
-    private StopWatch watch;
 
     public LogMethodInterceptor() {
     }
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        startTime();
+        StopWatch watch = new StopWatch();
+        watch.start();
         try {
             logInvokingMethod(methodInvocation);
             return methodInvocation.proceed();
         } finally {
-            endTime();
-            logMethodTiming(methodInvocation);
+            watch.stop();
+            logMethodTiming(methodInvocation,watch.getTime());
         }
     }
 
-    private void endTime() {
-        this.watch.stop();
-    }
-
-    private void startTime() {
-        this.watch = new StopWatch();
-        this.watch.start();
-    }
-
-    private void logMethodTiming(MethodInvocation methodInvocation) {
+   private void logMethodTiming(MethodInvocation methodInvocation,long time) {
         if (LOG.isDebugEnabled()) {
-            long time = watch.getTime();
             LOG.debug("Method {}() took {}ms", methodInvocation.getMethod().getName(),time);
         }
     }
