@@ -16,13 +16,11 @@
     </bean>
     <bean id="saluteServiceTarget" class="org.fgt.ws.client.SaluteServiceImpl"/>
 
-    <bean id="cacheInterceptor" class="org.fgt.ws.client.CacheInvocationHandler">
+    <bean id="cacheInterceptor" class="org.fgt.ws.client.CacheMethodInterceptor">
         <constructor-arg ref="cache"/>
     </bean>
 
-    <bean id="logInterceptor" class="org.fgt.ws.client.LogInvocationHandler" />
-
-
+    <bean id="logInterceptor" class="org.fgt.ws.client.LogMethodInterceptor" />
 
     <bean id="saluteService" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">

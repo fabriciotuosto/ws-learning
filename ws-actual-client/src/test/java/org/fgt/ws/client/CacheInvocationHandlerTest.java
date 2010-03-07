@@ -28,8 +28,8 @@ public class CacheInvocationHandlerTest {
         methodInvocation = mock(MethodInvocation.class);
     }
 
-    private CacheInvocationHandler createCacheInvocationHandler(Cache cache) {
-        return new CacheInvocationHandler(cache);
+    private CacheMethodInterceptor createCacheInvocationHandler(Cache cache) {
+        return new CacheMethodInterceptor(cache);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class CacheInvocationHandlerTest {
     @Test
     public void testGeneratedCacheKey() throws Throwable {
         setpUpMethodInvocation();
-        CacheInvocationHandler handler = createCacheInvocationHandler(cache);
+        CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
         String key = "java.lang.String.hashCode()[" + methodInvocation.getThis().hashCode() + "] []";
         assertEquals(key, handler.generateCacheKey(methodInvocation));
     }
@@ -48,7 +48,7 @@ public class CacheInvocationHandlerTest {
     @Test
     public void testAddedToCache() throws Throwable {
         setpUpMethodInvocation();
-        CacheInvocationHandler handler = createCacheInvocationHandler(cache);
+        CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
         handler.invoke(methodInvocation);
         String key = "java.lang.String.hashCode()[" + instance.hashCode() + "] []";
         assertEquals(instance.hashCode(), cache.get(key).getValue());
@@ -57,7 +57,7 @@ public class CacheInvocationHandlerTest {
     @Test
     public void should_return_null_from_cache() throws Throwable {
         setpUpMethodInvocation();
-        CacheInvocationHandler handler = createCacheInvocationHandler(cache);
+        CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
         String key = "java.lang.String.hashCode()[" + instance.hashCode() + "] []";
         assertNull(cache.get(key));
     }
@@ -66,7 +66,7 @@ public class CacheInvocationHandlerTest {
     public void should_execute_method() throws Throwable {
         setpUpMethodInvocation();
         when(methodInvocation.proceed()).thenReturn(instance.hashCode());
-        CacheInvocationHandler handler = createCacheInvocationHandler(cache);
+        CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
         assertEquals(instance.hashCode(), handler.invoke(methodInvocation));
     }
 
