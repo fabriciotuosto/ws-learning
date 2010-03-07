@@ -27,7 +27,7 @@ public class SpringIntegrationTest {
 
     @Test
     public void should_be_retrieved_from_cache(){
-        String salute = saluteService.sayHello("John Doe");
-        assertSame(salute, saluteService.sayHello("John Doe"));
+        String salute = saluteService.sayHello("Jane Doe");
+        assertSame(salute, saluteService.sayHello("Jane Doe"));
     }
 }
