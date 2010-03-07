@@ -6,14 +6,18 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-    <bean id="cache" class="net.sf.ehcache.Cache">
-        <constructor-arg value="test"/>
-        <constructor-arg value="10"/>
-        <constructor-arg value="false"/>
-        <constructor-arg value="false"/>
-        <constructor-arg value="0"/>
-        <constructor-arg value="0"/>
+
+    <bean id="cacheManager" class="net.sf.ehcache.CacheManager">
+        
     </bean>
+
+    <bean id="cacheUtil" class="org.fgt.ws.client.CacheUtil">
+        <constructor-arg value="webservice"/>
+        <constructor-arg ref="cacheManager"/>
+    </bean>
+
+    <bean id="cache" class="net.sf.ehcache.Cache" factory-bean="cacheUtil"
+                              factory-method="getCache" />
     <bean id="saluteServiceTarget" class="org.fgt.ws.client.SaluteServiceImpl"/>
 
     <bean id="cacheInterceptor" class="org.fgt.ws.client.CacheMethodInterceptor">
@@ -28,7 +32,7 @@
         </property>
         <property name="interceptorNames">
             <list>
-
+                <value>logInterceptor</value>
                 <value>cacheInterceptor</value>
             </list>
         </property>

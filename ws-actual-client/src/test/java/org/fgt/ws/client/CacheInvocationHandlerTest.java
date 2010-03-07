@@ -41,7 +41,7 @@ public class CacheInvocationHandlerTest {
     public void testGeneratedCacheKey() throws Throwable {
         setpUpMethodInvocation();
         CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
-        String key = "java.lang.String.hashCode()[" + methodInvocation.getThis().hashCode() + "] []";
+        String key = "java.lang.String.hashCode()[" +instance.hashCode() + "] []";
         assertEquals(key, handler.generateCacheKey(methodInvocation));
     }
 

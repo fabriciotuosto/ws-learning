@@ -41,7 +41,7 @@ public class LogMethodInterceptor implements MethodInterceptor {
     private void logMethodTiming(MethodInvocation methodInvocation) {
         if (LOG.isDebugEnabled()) {
             long time = watch.getTime();
-            LOG.debug("Method {}() took ", methodInvocation.getMethod().getName(),watch.toSplitString());
+            LOG.debug("Method {}() took {}ms", methodInvocation.getMethod().getName(),time);
         }
     }
 
