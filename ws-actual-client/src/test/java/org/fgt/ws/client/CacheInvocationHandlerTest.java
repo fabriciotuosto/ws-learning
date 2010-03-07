@@ -41,14 +41,14 @@ public class CacheInvocationHandlerTest {
 
     @Test
     public void testGeneratedCacheKey() throws Throwable {
-        setpUpMethodInvocation();
+        setUpMethodInvocation();
         CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
         assertEquals(key, handler.generateCacheKey(methodInvocation));
     }
 
     @Test
     public void testAddedToCache() throws Throwable {
-        setpUpMethodInvocation();
+        setUpMethodInvocation();
         CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
         handler.invoke(methodInvocation);
         assertEquals(instance.hashCode(), cache.get(key).getValue());
@@ -56,19 +56,19 @@ public class CacheInvocationHandlerTest {
 
     @Test
     public void should_return_null_from_cache() throws Throwable {
-        setpUpMethodInvocation();
+        setUpMethodInvocation();
         assertNull(cache.get(key));
     }
 
     @Test
     public void should_execute_method() throws Throwable {
-        setpUpMethodInvocation();
+        setUpMethodInvocation();
         when(methodInvocation.proceed()).thenReturn(instance.hashCode());
         CacheMethodInterceptor handler = createCacheInvocationHandler(cache);
         assertEquals(instance.hashCode(), handler.invoke(methodInvocation));
     }
 
-    private void setpUpMethodInvocation() throws Throwable {
+    private void setUpMethodInvocation() throws Throwable {
         methodInvocation = mock(MethodInvocation.class);
         Method method = String.class.getMethod("hashCode", new Class<?>[0]);
         when(methodInvocation.getMethod()).thenReturn(method);
