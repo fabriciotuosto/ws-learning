@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @ContextConfiguration("classpath:/context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,5 +23,11 @@ public class SpringIntegrationTest {
     public void should_create_spring_context() {
         String salute = saluteService.sayHello("John Doe");
         assertEquals("Hello John Doe , How are you ?",salute);
+    }
+
+    @Test
+    public void should_be_retrieved_from_cache(){
+        String salute = saluteService.sayHello("John Doe");
+        assertSame(salute, saluteService.sayHello("John Doe"));
     }
 }
