@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -18,7 +17,6 @@ public class CacheMethodInterceptor implements MethodInterceptor {
 
     public CacheMethodInterceptor(Cache cache) {
         this.cache = Precondition.checkNotNull(cache);
-
     }
 
     private Object invokeAndCache(MethodInvocation methodInvocation) throws Throwable {
