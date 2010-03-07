@@ -16,9 +16,10 @@
         <constructor-arg ref="cacheManager"/>
     </bean>
 
-    <bean id="cache" class="net.sf.ehcache.Cache" factory-bean="cacheUtil"
-                              factory-method="getCache" />
-    <bean id="saluteServiceTarget" class="org.fgt.ws.client.SaluteServiceImpl"/>
+    <bean id="cache" class="net.sf.ehcache.Cache"
+                     factory-bean="cacheUtil"
+                     factory-method="getCache" />
+    
 
     <bean id="cacheInterceptor" class="org.fgt.ws.client.CacheMethodInterceptor">
         <constructor-arg ref="cache"/>
@@ -28,7 +29,7 @@
 
     <bean id="saluteService" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
-            <ref bean="saluteServiceTarget"/>
+            <bean id="saluteServiceTarget" class="org.fgt.ws.client.SaluteServiceImpl"/>
         </property>
         <property name="interceptorNames">
             <list>
