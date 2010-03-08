@@ -9,38 +9,49 @@ import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LogMethodInterceptor implements MethodInterceptor {
+public class LogMethodInterceptor implements MethodInterceptor
+{
 
-    private static final Logger LOG = LoggerFactory.getLogger(LogMethodInterceptor.class);
+   public LogMethodInterceptor()
+   {
+      super();
+   }
 
-    public LogMethodInterceptor() {
-    }
+   @Override
+   public Object invoke(MethodInvocation methodInvocation) throws Throwable
+   {
+      StopWatch watch = new StopWatch();
+      watch.start();
+      try
+      {
+         logInvokingMethod(methodInvocation);
+         return methodInvocation.proceed();
+      }
+      finally
+      {
+         watch.stop();
+         logMethodTiming(methodInvocation, watch.getTime());
+      }
+   }
 
-    @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        StopWatch watch = new StopWatch();
-        watch.start();
-        try {
-            logInvokingMethod(methodInvocation);
-            return methodInvocation.proceed();
-        } finally {
-            watch.stop();
-            logMethodTiming(methodInvocation,watch.getTime());
-        }
-    }
+   private void logMethodTiming(MethodInvocation methodInvocation, long time)
+   {
+      final Logger LOG = LoggerFactory.getLogger(methodInvocation.getThis().getClass());
+      if (LOG.isDebugEnabled())
+      {
+         LOG.debug("Method {}() took {}ms", methodInvocation.getMethod().getName(), time);
+      }
+   }
 
-   private void logMethodTiming(MethodInvocation methodInvocation,long time) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Method {}() took {}ms", methodInvocation.getMethod().getName(),time);
-        }
-    }
-
-    private void logInvokingMethod(MethodInvocation methodInvocation) {
-        if (LOG.isDebugEnabled()) {
-            Method method = methodInvocation.getMethod();
-            Object[] args = methodInvocation.getArguments();
-            LOG.debug("Invoking method={}(), with arguments={}", method.toString(),
-                    Arrays.toString(args));
-        }
-    }
+   private void logInvokingMethod(MethodInvocation methodInvocation)
+   {
+      final Logger LOG = LoggerFactory.getLogger(methodInvocation.getThis().getClass());
+      if (LOG.isDebugEnabled())
+      {
+         Method method = methodInvocation.getMethod();
+         Object[] args = methodInvocation.getArguments();
+         LOG.debug("Invoking method={}(), with arguments={}", method.toString(), Arrays
+            .toString(args));
+      }
+   }
 }
