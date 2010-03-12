@@ -33,7 +33,7 @@ public class LogMethodInterceptor implements MethodInterceptor
    private void logMethodTiming(MethodInvocation methodInvocation,long time) {
       final Logger LOG = LoggerFactory.getLogger(methodInvocation.getThis().getClass());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Method {}() took {}ms", methodInvocation.getMethod().getName(),time);
+           LOG.debug("Method {}() took {}ms", methodInvocation.getMethod().getName(),time);
         }
     }
 

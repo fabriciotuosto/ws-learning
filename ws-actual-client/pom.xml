@@ -8,10 +8,7 @@
     <artifactId>ws-actual-client</artifactId>
     <name>WS Actual Client</name>
     <description>
-        This artifact is an adapter of the generated stub from wsdl
-        adding caching and other convinience needed uses cases also allowing
-        to abosrb the impact in changes y the web service allowing better unit
-        testing to avoid the needded of a container to test things
+        This artifact is an adapter of the generated stub from wsdl adding caching and other convinience needed uses cases also allowing to abosrb the impact in changes y the web service allowing better unit testing to avoid the needded of a container to test things
     </description>
     <dependencies>
         <dependency>

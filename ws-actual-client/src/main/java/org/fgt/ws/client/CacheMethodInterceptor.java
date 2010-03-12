@@ -16,7 +16,8 @@ public class CacheMethodInterceptor implements MethodInterceptor {
     private final Cache cache;
 
     public CacheMethodInterceptor(Cache cache) {
-        this.cache = Precondition.checkNotNull(cache);
+       super();
+       this.cache = Precondition.checkNotNull(cache);
     }
 
     private Object invokeAndCache(MethodInvocation methodInvocation) throws Throwable {
